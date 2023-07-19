@@ -11,10 +11,12 @@ Pending Changes at same URL
 ### Install dependencies
 
 ```
-yarn install
+yarn install:all
 ```
 
 ### Update subgraph schema
+
+Depending on whether working on testnet or production subgraph, please work out of the relevant `phlox` or `mauve` directories respectively.
 
 Make any additions or changes to the `subgraph.yaml` file to include contracts and entity declarations here.
 
@@ -23,13 +25,13 @@ Ensure that any entity declarations and ABIs referenced exist and are defined we
 ### Generate types
 
 ```
-yarn codegen
+yarn codegen-all
 ```
 
 ### Compile subgraph
 
 ```
-yarn build
+yarn build-all
 ```
 
 ### Deploy subgraph
