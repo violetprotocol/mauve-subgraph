@@ -4,6 +4,7 @@
   "repository": "https://github.com/violetprotocol/mauve-subgraph",
   "license": "GPL-3.0-or-later",
   "scripts": {
+    "install:all": "cd phlox && yarn -cwd & cd mauve && yarn -cwd",
     "phlox:codegen": "cd phlox && yarn codegen",
     "phlox:build": "cd phlox && yarn build",
     "phlox:deploy": "cd phlox && yarn deploy",
