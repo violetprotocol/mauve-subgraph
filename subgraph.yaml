@@ -8,11 +8,11 @@ features:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: goerli
+    network: optimism-goerli
     source:
-      address: '0x1EA6C6917e5b707aFfA07e00B7c6CD8dC346bB36'
+      address: '0x603B9cFc578971d99f5A0b75cC5c097e6C882e72'
       abi: Factory
-      startBlock: 8326230
+      startBlock: 11607322
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -37,11 +37,11 @@ dataSources:
           handler: handlePoolCreated
   - kind: ethereum/contract
     name: NonfungiblePositionManager
-    network: goerli
+    network: optimism-goerli
     source:
-      address: '0xaa8e717846745B6E7174A1bbd22e53500d767c21'
+      address: '0x02758783484E496730B59A7556acEca8Ff37733f'
       abi: NonfungiblePositionManager
-      startBlock: 8326230
+      startBlock: 11607710
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -71,7 +71,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: goerli
+    network: optimism-goerli
     source:
       abi: Pool
     mapping:
