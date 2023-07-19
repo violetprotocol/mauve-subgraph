@@ -1,8 +1,8 @@
 /* eslint-disable prefer-const */
 import { ONE_BD, ZERO_BD, ZERO_BI } from './constants'
-import { Bundle, Pool, Token } from './../types/schema'
+import { Bundle, Pool, Token } from '../types/schema'
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
-import { exponentToBigDecimal, safeDiv } from '../utils/index'
+import { exponentToBigDecimal, safeDiv } from './index'
 
 const WETH_ADDRESS = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'
 const USDC_WETH_03_POOL = '0x557eC7FA7B7Ab6C8342185BcE8C8dF253fC67C91'
@@ -12,7 +12,7 @@ const USDC_WETH_03_POOL = '0x557eC7FA7B7Ab6C8342185BcE8C8dF253fC67C91'
 export let WHITELIST_TOKENS: string[] = [
   WETH_ADDRESS, // WETH
   '0x07865c6E87B9F70255377e024ace6630C1Eaa37F', // USDC
-  '0x326C977E6efc84E512bB9C30f76E30c160eD06FB', // LINK
+  '0x326C977E6efc84E512bB9C30f76E30c160eD06FB' // LINK
   // '0x6b175474e89094c44da98b954eedeac495271d0f', // DAI
   // '0xdac17f958d2ee523a2206206994597c13d831ec7', // USDT
   // '0x0000000000085d4780b73119b644ae5ecd22b376', // TUSD
@@ -34,7 +34,7 @@ export let WHITELIST_TOKENS: string[] = [
 ]
 
 let STABLE_COINS: string[] = [
-  '0x07865c6E87B9F70255377e024ace6630C1Eaa37F',
+  '0x07865c6E87B9F70255377e024ace6630C1Eaa37F'
   // '0x6b175474e89094c44da98b954eedeac495271d0f',
   // '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
   // '0xdac17f958d2ee523a2206206994597c13d831ec7',

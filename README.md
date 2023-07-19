@@ -34,6 +34,14 @@ yarn build
 
 ### Deploy subgraph
 
+For production:
+
 ```
-yarn deploy
+yarn mauve:deploy
+```
+
+For testnet:
+
+```
+yarn phlox:deploy
 ```
