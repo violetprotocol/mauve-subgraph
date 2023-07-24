@@ -22,16 +22,20 @@ Make any additions or changes to the `subgraph.yaml` file to include contracts a
 
 Ensure that any entity declarations and ABIs referenced exist and are defined well. The `schema.graphql` file contains all object structures queryable through the graph.
 
+### Configure networks
+
+Populate the `networks.json` file with the contracts for each network that you are defining subgraphs for.
+
 ### Generate types
 
 ```
-yarn codegen-all
+yarn codegen
 ```
 
 ### Compile subgraph
 
 ```
-yarn build-all
+yarn build -network <network>
 ```
 
 ### Deploy subgraph
@@ -39,11 +43,11 @@ yarn build-all
 For production:
 
 ```
-yarn mauve:deploy
+yarn deploy mainnet
 ```
 
 For testnet:
 
 ```
-yarn phlox:deploy
+yarn deploy optimism-goerli
 ```
