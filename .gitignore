@@ -1,5 +1,6 @@
-build/
-node_modules/
-src/types/
+**/build/
+**/node_modules/
+**/types/
 .DS_STORE
 yarn-error.log
+.env

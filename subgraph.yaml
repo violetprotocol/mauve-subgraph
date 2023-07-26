@@ -1,5 +1,5 @@
-specVersion: 0.0.2
-description: phlox
+specVersion: 0.0.4
+description: mauve
 repository: https://github.com/violetprotocol/mauve-subgraph
 schema:
   file: ./schema.graphql
@@ -7,15 +7,15 @@ features:
   - nonFatalErrors
 dataSources:
   - kind: ethereum/contract
-    name: Factory
-    network: goerli
+    name: MauveFactory
+    network: optimism-goerli
     source:
-      address: '0x1EA6C6917e5b707aFfA07e00B7c6CD8dC346bB36'
       abi: Factory
-      startBlock: 8326230
+      address: '0x120ee46cD534ec68D1758c9d596A2A268B3fBA98'
+      startBlock: 9491621
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/factory.ts
       entities:
@@ -37,14 +37,14 @@ dataSources:
           handler: handlePoolCreated
   - kind: ethereum/contract
     name: NonfungiblePositionManager
-    network: goerli
+    network: optimism-goerli
     source:
-      address: '0xaa8e717846745B6E7174A1bbd22e53500d767c21'
       abi: NonfungiblePositionManager
-      startBlock: 8326230
+      address: '0xD2678cF600262057f485d12aD8F7c8FB5941EB46'
+      startBlock: 9491636
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/position-manager.ts
       entities:
@@ -71,12 +71,12 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: goerli
+    network: optimism-goerli
     source:
       abi: Pool
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/core.ts
       entities:
@@ -94,7 +94,8 @@ templates:
           handler: handleInitialize
         - event: Swap(indexed address,indexed address,int256,int256,uint160,uint128,int24)
           handler: handleSwap
-        - event: Mint(address,indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+        - event: Mint(address,indexed address,indexed int24,indexed
+            int24,uint128,uint256,uint256)
           handler: handleMint
         - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
           handler: handleBurn

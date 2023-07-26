@@ -25,16 +25,18 @@ import { createTick, feeTierToTickSpacing } from '../utils/tick'
 export function handleInitialize(event: Initialize): void {
   // update pool sqrt price and tick
   let pool = Pool.load(event.address.toHexString())
+  if (!pool) return
   pool.sqrtPrice = event.params.sqrtPriceX96
   pool.tick = BigInt.fromI32(event.params.tick)
   pool.save()
-  
+
   // update token prices
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
 
   // update ETH price now that prices could have changed
   let bundle = Bundle.load('1')
+  if (!bundle) return
   bundle.ethPriceUSD = getEthPriceInUSD()
   bundle.save()
 
@@ -42,6 +44,7 @@ export function handleInitialize(event: Initialize): void {
   updatePoolHourData(event)
 
   // update token prices
+  if (!token0 || !token1) return
   token0.derivedETH = findEthPerToken(token0 as Token)
   token1.derivedETH = findEthPerToken(token1 as Token)
   token0.save()
@@ -52,17 +55,21 @@ export function handleMint(event: MintEvent): void {
   let bundle = Bundle.load('1')
   let poolAddress = event.address.toHexString()
   let pool = Pool.load(poolAddress)
+  if (!pool) return
   let factory = Factory.load(FACTORY_ADDRESS)
 
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
+  if (!token0 || !token1) return
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
 
+  if (!bundle) return
   let amountUSD = amount0
     .times(token0.derivedETH.times(bundle.ethPriceUSD))
     .plus(amount1.times(token1.derivedETH.times(bundle.ethPriceUSD)))
 
+  if (!factory) return
   // reset tvl aggregates until new amounts calculated
   factory.totalValueLockedETH = factory.totalValueLockedETH.minus(pool.totalValueLockedETH)
 
@@ -173,8 +180,12 @@ export function handleBurn(event: BurnEvent): void {
   let pool = Pool.load(poolAddress)
   let factory = Factory.load(FACTORY_ADDRESS)
 
+  if (!pool) return
+
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
+
+  if (!factory || !token0 || !token1 || !bundle) return
   let amount0 = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let amount1 = convertTokenToDecimal(event.params.amount1, token1.decimals)
 
@@ -245,6 +256,7 @@ export function handleBurn(event: BurnEvent): void {
   let lowerTick = Tick.load(lowerTickId)
   let upperTick = Tick.load(upperTickId)
   let amount = event.params.amount
+  if (!lowerTick || !upperTick) return
   lowerTick.liquidityGross = lowerTick.liquidityGross.minus(amount)
   lowerTick.liquidityNet = lowerTick.liquidityNet.minus(amount)
   upperTick.liquidityGross = upperTick.liquidityGross.minus(amount)
@@ -271,6 +283,7 @@ export function handleSwap(event: SwapEvent): void {
   let bundle = Bundle.load('1')
   let factory = Factory.load(FACTORY_ADDRESS)
   let pool = Pool.load(event.address.toHexString())
+  if (!pool || !factory || !bundle) return
 
   // hot fix for bad pricing
   if (pool.id == '0x9663f2ca0454accad3e094448ea6f77443880454') {
@@ -279,6 +292,7 @@ export function handleSwap(event: SwapEvent): void {
 
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
+  if (!token0 || !token1) return
 
   let oldTick = pool.tick!
 
@@ -501,6 +515,7 @@ export function handleFlash(event: FlashEvent): void {
   let poolContract = PoolABI.bind(event.address)
   let feeGrowthGlobal0X128 = poolContract.feeGrowthGlobal0X128()
   let feeGrowthGlobal1X128 = poolContract.feeGrowthGlobal1X128()
+  if (!pool) return
   pool.feeGrowthGlobal0X128 = feeGrowthGlobal0X128 as BigInt
   pool.feeGrowthGlobal1X128 = feeGrowthGlobal1X128 as BigInt
   pool.save()
