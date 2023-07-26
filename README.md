@@ -2,7 +2,7 @@
 
 ### Subgraph Endpoint
 
-Synced at: https://thegraph.com/hosted-service/subgraph/violetprotocol/phlox-subgraph
+Synced at: https://thegraph.com/hosted-service/subgraph/violetprotocol/mauve-subgraph
 
 Pending Changes at same URL
 
@@ -15,8 +15,6 @@ yarn install:all
 ```
 
 ### Update subgraph schema
-
-Depending on whether working on testnet or production subgraph, please work out of the relevant `phlox` or `mauve` directories respectively.
 
 Make any additions or changes to the `subgraph.yaml` file to include contracts and entity declarations here.
 
