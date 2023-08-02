@@ -11,7 +11,7 @@ dataSources:
     network: optimism-goerli
     source:
       abi: Factory
-      address: '0x120ee46cD534ec68D1758c9d596A2A268B3fBA98'
+      address: "0x120ee46cD534ec68D1758c9d596A2A268B3fBA98"
       startBlock: 9491621
     mapping:
       kind: ethereum/events
@@ -40,7 +40,7 @@ dataSources:
     network: optimism-goerli
     source:
       abi: NonfungiblePositionManager
-      address: '0xD2678cF600262057f485d12aD8F7c8FB5941EB46'
+      address: "0xD2678cF600262057f485d12aD8F7c8FB5941EB46"
       startBlock: 9491636
     mapping:
       kind: ethereum/events
