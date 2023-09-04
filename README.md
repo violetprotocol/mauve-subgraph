@@ -33,7 +33,7 @@ yarn codegen
 ### Compile subgraph
 
 ```
-yarn build -network <network>
+yarn build --network <network>
 ```
 
 ### Deploy subgraph
