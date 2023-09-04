@@ -1,12 +1,12 @@
 {
   "mainnet": {
     "MauveFactory": {
-      "address": "TBD",
-      "startBlock": 0
+      "address": "0x0569168709a869e7f4Ba142c49BFF7faA14f76C8",
+      "startBlock": 18047375
     },
     "NonfungiblePositionManager": {
-      "address": "TBD",
-      "startBlock": 0
+      "address": "0x26c2bd020BfBe8366F79FFDA1A0cfAC5A7b52108",
+      "startBlock": 18047410
     }
   },
   "optimism-goerli": {
