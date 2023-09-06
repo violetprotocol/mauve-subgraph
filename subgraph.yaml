@@ -8,11 +8,11 @@ features:
 dataSources:
   - kind: ethereum/contract
     name: MauveFactory
-    network: optimism-goerli
+    network: mainnet
     source:
       abi: Factory
-      address: "0x210ECaBE2853369B8a5E9B71F390E36220433f8b"
-      startBlock: 12518082
+      address: '0x0569168709a869e7f4Ba142c49BFF7faA14f76C8'
+      startBlock: 18047375
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -37,11 +37,11 @@ dataSources:
           handler: handlePoolCreated
   - kind: ethereum/contract
     name: NonfungiblePositionManager
-    network: optimism-goerli
+    network: mainnet
     source:
       abi: NonfungiblePositionManager
-      address: "0xA853d62e5Da98117827C801BdD69c35C181DBD87"
-      startBlock: 12518136
+      address: '0x26c2bd020BfBe8366F79FFDA1A0cfAC5A7b52108'
+      startBlock: 18047410
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -71,7 +71,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: optimism-goerli
+    network: mainnet
     source:
       abi: Pool
     mapping:
