@@ -41,11 +41,11 @@ yarn build --network <network>
 For production:
 
 ```
-yarn deploy mainnet
+yarn deploy:mainnet
 ```
 
 For testnet:
 
 ```
-yarn deploy optimism-goerli
+yarn deploy:optimism-goerli
 ```
