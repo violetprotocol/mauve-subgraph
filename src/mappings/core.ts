@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { Bundle, Burn, Factory, Mint, Pool, Swap, Tick, Token } from '../types/schema'
 import { Pool as PoolABI } from '../types/Factory/Pool'
-import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, dataSource, ethereum } from '@graphprotocol/graph-ts'
 import {
   Burn as BurnEvent,
   Flash as FlashEvent,
@@ -10,7 +10,7 @@ import {
   Swap as SwapEvent
 } from '../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction, safeDiv } from '../utils'
-import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
+import { FACTORY_ADDRESSES, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
 import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
 import {
   updatePoolDayData,
@@ -21,6 +21,31 @@ import {
   updateUniswapDayData
 } from '../utils/intervalUpdates'
 import { createTick, feeTierToTickSpacing } from '../utils/tick'
+
+function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
+  let poolAddress = event.address
+  // not all ticks are initialized so obtaining null is expected behavior
+  let poolContract = PoolABI.bind(poolAddress)
+  let tickResult = poolContract.ticks(tick.tickIdx.toI32())
+  tick.feeGrowthOutside0X128 = tickResult.value2
+  tick.feeGrowthOutside1X128 = tickResult.value3
+  tick.save()
+
+  updateTickDayData(tick!, event)
+}
+
+function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void {
+  let poolAddress = event.address
+  let tick = Tick.load(
+    poolAddress
+      .toHexString()
+      .concat('#')
+      .concat(tickId.toString())
+  )
+  if (tick !== null) {
+    updateTickFeeVarsAndSave(tick!, event)
+  }
+}
 
 export function handleInitialize(event: Initialize): void {
   // update pool sqrt price and tick
@@ -56,7 +81,11 @@ export function handleMint(event: MintEvent): void {
   let poolAddress = event.address.toHexString()
   let pool = Pool.load(poolAddress)
   if (!pool) return
-  let factory = Factory.load(FACTORY_ADDRESS)
+
+  const networkName = dataSource.network();
+  if(!networkName) return
+
+  let factory = Factory.load(FACTORY_ADDRESSES[networkName])
 
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
@@ -178,7 +207,10 @@ export function handleBurn(event: BurnEvent): void {
   let bundle = Bundle.load('1')
   let poolAddress = event.address.toHexString()
   let pool = Pool.load(poolAddress)
-  let factory = Factory.load(FACTORY_ADDRESS)
+  const networkName = dataSource.network();
+  if(!networkName) return
+
+  let factory = Factory.load(FACTORY_ADDRESSES[networkName])
 
   if (!pool) return
 
@@ -281,7 +313,10 @@ export function handleBurn(event: BurnEvent): void {
 
 export function handleSwap(event: SwapEvent): void {
   let bundle = Bundle.load('1')
-  let factory = Factory.load(FACTORY_ADDRESS)
+  const networkName = dataSource.network();
+  if(!networkName) return
+
+  let factory = Factory.load(FACTORY_ADDRESSES[networkName])
   let pool = Pool.load(event.address.toHexString())
   if (!pool || !factory || !bundle) return
 
@@ -519,29 +554,4 @@ export function handleFlash(event: FlashEvent): void {
   pool.feeGrowthGlobal0X128 = feeGrowthGlobal0X128 as BigInt
   pool.feeGrowthGlobal1X128 = feeGrowthGlobal1X128 as BigInt
   pool.save()
-}
-
-function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
-  let poolAddress = event.address
-  // not all ticks are initialized so obtaining null is expected behavior
-  let poolContract = PoolABI.bind(poolAddress)
-  let tickResult = poolContract.ticks(tick.tickIdx.toI32())
-  tick.feeGrowthOutside0X128 = tickResult.value2
-  tick.feeGrowthOutside1X128 = tickResult.value3
-  tick.save()
-
-  updateTickDayData(tick!, event)
-}
-
-function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void {
-  let poolAddress = event.address
-  let tick = Tick.load(
-    poolAddress
-      .toHexString()
-      .concat('#')
-      .concat(tickId.toString())
-  )
-  if (tick !== null) {
-    updateTickFeeVarsAndSave(tick!, event)
-  }
 }
