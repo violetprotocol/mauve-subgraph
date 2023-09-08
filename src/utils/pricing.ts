@@ -1,16 +1,22 @@
 /* eslint-disable prefer-const */
 import { ONE_BD, ZERO_BD, ZERO_BI } from './constants'
 import { Bundle, Pool, Token } from '../types/schema'
-import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, dataSource } from '@graphprotocol/graph-ts'
 import { exponentToBigDecimal, safeDiv } from './index'
 
-const WETH_ADDRESS = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'
-const USDC_WETH_03_POOL = '0x557eC7FA7B7Ab6C8342185BcE8C8dF253fC67C91'
+const WETH_ADDRESS_OP_GOERLI = '0x4200000000000000000000000000000000000006'
+const WETH_ADDRESS_MAINNET = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+
+const USDC_WETH_POOL = {
+  'optimism-goerli': '0xD7b15F685D998A7e692b98E9A59547b7B35BC92a',
+  'mainnet': '0xe45b4d18ac887ed9c221efe28b4fca230107f25f'
+}
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
 export let WHITELIST_TOKENS: string[] = [
-  WETH_ADDRESS, // WETH
+  WETH_ADDRESS_OP_GOERLI,
+  WETH_ADDRESS_MAINNET,
   '0x07865c6E87B9F70255377e024ace6630C1Eaa37F', // USDC
   '0x326C977E6efc84E512bB9C30f76E30c160eD06FB' // LINK
   // '0x6b175474e89094c44da98b954eedeac495271d0f', // DAI
@@ -59,10 +65,18 @@ export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, t
 }
 
 export function getEthPriceInUSD(): BigDecimal {
+  const networkName = dataSource.network();
+  if(!networkName) return ZERO_BD
+
+  let usdcPoolAddress = USDC_WETH_POOL[networkName]
+
+  if(!usdcPoolAddress) return ZERO_BD
+
   // fetch eth prices for each stablecoin
-  let usdcPool = Pool.load(USDC_WETH_03_POOL) // dai is token0
+  let usdcPool = Pool.load(usdcPoolAddress)
   if (usdcPool !== null) {
-    return usdcPool.token0Price
+    // token 0 is USDC
+    return usdcPool.token1Price
   } else {
     return ZERO_BD
   }
@@ -73,7 +87,7 @@ export function getEthPriceInUSD(): BigDecimal {
  * @todo update to be derived ETH (add stablecoin estimates)
  **/
 export function findEthPerToken(token: Token): BigDecimal {
-  if (token.id == WETH_ADDRESS) {
+  if (token.id == WETH_ADDRESS_OP_GOERLI || token.id == WETH_ADDRESS_MAINNET) {
     return ONE_BD
   }
   let whiteList = token.whitelistPools
