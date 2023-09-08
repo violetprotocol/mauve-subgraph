@@ -1,4 +1,4 @@
-import { ZERO_BD, ZERO_BI, ONE_BI, FACTORY_ADDRESSES } from './constants'
+import { ZERO_BD, ZERO_BI, ONE_BI, MAINNET_FACTORY_ADDRESS, OPTIMISM_GOERLI_FACTORY_ADDRESS } from './constants'
 /* eslint-disable prefer-const */
 import {
   UniswapDayData,
@@ -20,10 +20,15 @@ import { dataSource, ethereum } from '@graphprotocol/graph-ts'
  * @param event
  */
 export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
-  const networkName = dataSource.network();
+  const networkName = dataSource.network()
 
-  let factory = Factory.load(FACTORY_ADDRESSES[networkName])
-  if(!factory) throw new Error("updateUniswapDayData: Could not load Factory");
+  let factoryAddress: string = ''
+
+  if (networkName == 'mainnet') factoryAddress = MAINNET_FACTORY_ADDRESS
+  else if (networkName == 'optimism-goerli') factoryAddress = OPTIMISM_GOERLI_FACTORY_ADDRESS
+
+  let factory = Factory.load(factoryAddress)
+  if (!factory) throw new Error('updateUniswapDayData: Could not load Factory')
 
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400 // rounded

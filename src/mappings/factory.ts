@@ -1,6 +1,13 @@
 import { WHITELIST_TOKENS } from './../utils/pricing'
 /* eslint-disable prefer-const */
-import { FACTORY_ADDRESSES, ZERO_BI, ONE_BI, ZERO_BD, ADDRESS_ZERO } from './../utils/constants'
+import {
+  ZERO_BI,
+  ONE_BI,
+  ZERO_BD,
+  ADDRESS_ZERO,
+  MAINNET_FACTORY_ADDRESS,
+  OPTIMISM_GOERLI_FACTORY_ADDRESS
+} from './../utils/constants'
 import { Factory } from '../types/schema'
 import { PoolCreated } from '../types/Factory/Factory'
 import { Pool, Token, Bundle } from '../types/schema'
@@ -14,13 +21,19 @@ export function handlePoolCreated(event: PoolCreated): void {
     return
   }
 
-  const networkName = dataSource.network();
-  if(!networkName) return
+  const networkName = dataSource.network()
+  if (!networkName) return
+
+  let factoryAddress: string = ''
+
+  if (networkName == 'mainnet') factoryAddress = MAINNET_FACTORY_ADDRESS
+  else if (networkName == 'optimism-goerli') factoryAddress = OPTIMISM_GOERLI_FACTORY_ADDRESS
 
   // load factory
-  let factory = Factory.load(FACTORY_ADDRESSES[networkName])
+  let factory = Factory.load(factoryAddress)
+
   if (factory === null) {
-    factory = new Factory(FACTORY_ADDRESSES[networkName])
+    factory = new Factory(factoryAddress)
     factory.poolCount = ZERO_BI
     factory.totalVolumeETH = ZERO_BD
     factory.totalVolumeUSD = ZERO_BD

@@ -10,7 +10,7 @@ import {
   Swap as SwapEvent
 } from '../types/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction, safeDiv } from '../utils'
-import { FACTORY_ADDRESSES, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
+import { MAINNET_FACTORY_ADDRESS, ONE_BI, OPTIMISM_GOERLI_FACTORY_ADDRESS, ZERO_BD, ZERO_BI } from '../utils/constants'
 import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
 import {
   updatePoolDayData,
@@ -82,10 +82,15 @@ export function handleMint(event: MintEvent): void {
   let pool = Pool.load(poolAddress)
   if (!pool) return
 
-  const networkName = dataSource.network();
-  if(!networkName) return
+  const networkName = dataSource.network()
+  if (!networkName) return
 
-  let factory = Factory.load(FACTORY_ADDRESSES[networkName])
+  let factoryAddress: string = ''
+
+  if (networkName == 'mainnet') factoryAddress = MAINNET_FACTORY_ADDRESS
+  else if (networkName == 'optimism-goerli') factoryAddress = OPTIMISM_GOERLI_FACTORY_ADDRESS
+
+  let factory = Factory.load(factoryAddress)
 
   let token0 = Token.load(pool.token0)
   let token1 = Token.load(pool.token1)
@@ -207,10 +212,15 @@ export function handleBurn(event: BurnEvent): void {
   let bundle = Bundle.load('1')
   let poolAddress = event.address.toHexString()
   let pool = Pool.load(poolAddress)
-  const networkName = dataSource.network();
-  if(!networkName) return
+  const networkName = dataSource.network()
+  if (!networkName) return
 
-  let factory = Factory.load(FACTORY_ADDRESSES[networkName])
+  let factoryAddress: string = ''
+
+  if (networkName == 'mainnet') factoryAddress = MAINNET_FACTORY_ADDRESS
+  else if (networkName == 'optimism-goerli') factoryAddress = OPTIMISM_GOERLI_FACTORY_ADDRESS
+
+  let factory = Factory.load(factoryAddress)
 
   if (!pool) return
 
@@ -313,10 +323,15 @@ export function handleBurn(event: BurnEvent): void {
 
 export function handleSwap(event: SwapEvent): void {
   let bundle = Bundle.load('1')
-  const networkName = dataSource.network();
-  if(!networkName) return
+  const networkName = dataSource.network()
+  if (!networkName) return
 
-  let factory = Factory.load(FACTORY_ADDRESSES[networkName])
+  let factoryAddress: string = ''
+
+  if (networkName == 'mainnet') factoryAddress = MAINNET_FACTORY_ADDRESS
+  else if (networkName == 'optimism-goerli') factoryAddress = OPTIMISM_GOERLI_FACTORY_ADDRESS
+
+  let factory = Factory.load(factoryAddress)
   let pool = Pool.load(event.address.toHexString())
   if (!pool || !factory || !bundle) return
 

@@ -14,14 +14,11 @@ const WETH_MAINNET = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 const USDC_MAINNET = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
 const EUROC = '0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c'
 const COINBASE_STAKED_ETH = '0xbe9895146f7af43049ca1c1ae358b0541ea49704'
-const LIDO_STAKED_ETH =  '0xae7ab96520de3a18e5e111b5eaab095312d7fe84'
+const LIDO_STAKED_ETH = '0xae7ab96520de3a18e5e111b5eaab095312d7fe84'
 const LIQUID_STAKED_ETH = '0x8c1BEd5b9a0928467c9B1341Da1D7BD5e10b6549'
 
-
-const USDC_WETH_POOL = {
-  'optimism-goerli': '0xD7b15F685D998A7e692b98E9A59547b7B35BC92a',
-  'mainnet': '0xe45b4d18ac887ed9c221efe28b4fca230107f25f'
-}
+const MAINNET_USDC_WETH_POOL = '0xe45b4d18ac887ed9c221efe28b4fca230107f25f'
+const OPTIMISM_GOERLI_USDC_WETH_POOL = '0xD7b15F685D998A7e692b98E9A59547b7B35BC92a'
 
 // token where amounts should contribute to tracked volume and liquidity
 // usually tokens that many tokens are paired with s
@@ -86,12 +83,15 @@ export function sqrtPriceX96ToTokenPrices(sqrtPriceX96: BigInt, token0: Token, t
 }
 
 export function getEthPriceInUSD(): BigDecimal {
-  const networkName = dataSource.network();
-  if(!networkName) return ZERO_BD
+  const networkName = dataSource.network()
+  if (!networkName) return ZERO_BD
 
-  let usdcPoolAddress = USDC_WETH_POOL[networkName]
+  let usdcPoolAddress: string = ''
 
-  if(!usdcPoolAddress) return ZERO_BD
+  if (networkName == 'mainnet') usdcPoolAddress = MAINNET_USDC_WETH_POOL
+  else if (networkName == 'optimism-goerli') usdcPoolAddress = OPTIMISM_GOERLI_USDC_WETH_POOL
+
+  if (!usdcPoolAddress) return ZERO_BD
 
   // fetch eth prices for each stablecoin
   let usdcPool = Pool.load(usdcPoolAddress)
