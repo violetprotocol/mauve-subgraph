@@ -1,4 +1,4 @@
-import { ZERO_BD, ZERO_BI, ONE_BI } from './constants'
+import { ZERO_BD, ZERO_BI, ONE_BI, FACTORY_ADDRESSES } from './constants'
 /* eslint-disable prefer-const */
 import {
   UniswapDayData,
@@ -13,16 +13,18 @@ import {
   TickDayData,
   Tick
 } from '../types/schema'
-import { FACTORY_ADDRESS } from './constants'
-import { ethereum } from '@graphprotocol/graph-ts'
+import { dataSource, ethereum } from '@graphprotocol/graph-ts'
 
 /**
  * Tracks global aggregate data over daily windows
  * @param event
  */
 export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
-  let uniswap = Factory.load(FACTORY_ADDRESS)
-  if (!uniswap) throw new Error('updateUniswapDayData: uniswap is null')
+  const networkName = dataSource.network();
+
+  let factory = Factory.load(FACTORY_ADDRESSES[networkName])
+  if(!factory) throw new Error("updateUniswapDayData: Could not load Factory");
+
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400 // rounded
   let dayStartTimestamp = dayID * 86400
@@ -35,8 +37,8 @@ export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
     uniswapDayData.volumeUSDUntracked = ZERO_BD
     uniswapDayData.feesUSD = ZERO_BD
   }
-  uniswapDayData.tvlUSD = uniswap.totalValueLockedUSD
-  uniswapDayData.txCount = uniswap.txCount
+  uniswapDayData.tvlUSD = factory.totalValueLockedUSD
+  uniswapDayData.txCount = factory.txCount
   uniswapDayData.save()
   return uniswapDayData as UniswapDayData
 }
