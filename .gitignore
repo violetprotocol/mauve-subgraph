@@ -4,6 +4,3 @@
 .DS_STORE
 yarn-error.log
 .env
-
-# subgraph.yaml should be compiled before deploy
-subgraph.yaml

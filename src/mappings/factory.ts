@@ -1,19 +1,12 @@
 import { WHITELIST_TOKENS } from './../utils/pricing'
 /* eslint-disable prefer-const */
-import {
-  ZERO_BI,
-  ONE_BI,
-  ZERO_BD,
-  ADDRESS_ZERO,
-  MAINNET_FACTORY_ADDRESS,
-  OPTIMISM_GOERLI_FACTORY_ADDRESS
-} from './../utils/constants'
+import { FACTORY_ADDRESS, ZERO_BI, ONE_BI, ZERO_BD, ADDRESS_ZERO } from './../utils/constants'
 import { Factory } from '../types/schema'
 import { PoolCreated } from '../types/Factory/Factory'
 import { Pool, Token, Bundle } from '../types/schema'
 import { Pool as PoolTemplate } from '../types/templates'
 import { fetchTokenSymbol, fetchTokenName, fetchTokenTotalSupply, fetchTokenDecimals } from '../utils/token'
-import { log, BigInt, Address, dataSource } from '@graphprotocol/graph-ts'
+import { log, BigInt, Address } from '@graphprotocol/graph-ts'
 
 export function handlePoolCreated(event: PoolCreated): void {
   // temp fix
@@ -21,19 +14,10 @@ export function handlePoolCreated(event: PoolCreated): void {
     return
   }
 
-  const networkName = dataSource.network()
-  if (!networkName) return
-
-  let factoryAddress: string = ''
-
-  if (networkName == 'mainnet') factoryAddress = MAINNET_FACTORY_ADDRESS
-  else if (networkName == 'optimism-goerli') factoryAddress = OPTIMISM_GOERLI_FACTORY_ADDRESS
-
   // load factory
-  let factory = Factory.load(factoryAddress)
-
+  let factory = Factory.load(FACTORY_ADDRESS)
   if (factory === null) {
-    factory = new Factory(factoryAddress)
+    factory = new Factory(FACTORY_ADDRESS)
     factory.poolCount = ZERO_BI
     factory.totalVolumeETH = ZERO_BD
     factory.totalVolumeUSD = ZERO_BD
